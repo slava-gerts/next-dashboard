@@ -1,0 +1,8 @@
+query GetSuggestion($id: ID!) {
+	suggestion(id: $id) {
+		id
+		title
+		voteCount
+		viewerHasVoted
+	}
+}

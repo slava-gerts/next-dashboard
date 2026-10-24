@@ -1,0 +1,9 @@
+mutation SetVote($suggestionId: ID!, $voted: Boolean!) {
+	setVote(suggestionId: $suggestionId, voted: $voted) {
+		__typename
+		id
+		title
+		voteCount
+		viewerHasVoted
+	}
+}

@@ -4,21 +4,40 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "generate": "prisma generate && npm run codegen",
+    "build": "npm run generate && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
-    "next": "16.4.0",
+    "@apollo/client": "4.3.3",
+    "@better-auth/prisma-adapter": "1.7.10",
+    "@prisma/adapter-pg": "7.10.0",
+    "@prisma/client": "7.10.0",
+    "better-auth": "1.7.10",
+    "graphql": "16.14.2",
+    "graphql-yoga": "5.24.2",
+    "next": "16.4.3",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "rxjs": "7.8.2"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@graphql-codegen/cli": "7.4.5",
+    "@graphql-codegen/typed-document-node": "7.1.1",
+    "@graphql-codegen/typescript": "6.1.1",
+    "@graphql-codegen/typescript-operations": "6.1.10",
+    "@graphql-codegen/typescript-resolvers": "6.1.1",
+    "@graphql-typed-document-node/core": "3.2.0",
+    "@types/node": "24.19.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "18.0.8",
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
+    "prisma": "7.10.0",
+    "tsx": "4.23.15",
     "typescript": "^5"
   }
 }
