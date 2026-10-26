@@ -1,5 +1,5 @@
 import AuthDemo from './auth-demo'
-import SuggestionDemo from './suggestion-demo'
+import SuggestionList from './suggestion-list'
 
 import styles from './page.module.css'
 
@@ -18,9 +18,7 @@ export default function Home() {
         </div>
       </header>
 
-      <div className={styles.card}>
-        <SuggestionDemo />
-      </div>
+      <SuggestionList />
 		</main>
 	)
 }

@@ -1,0 +1,15 @@
+query GetSuggestions($first: Int!, $after: String) {
+	suggestions(first: $first, after: $after) {
+		nodes {
+			__typename
+			id
+			title
+			voteCount
+			viewerHasVoted
+		}
+		pageInfo {
+			hasNextPage
+			endCursor
+		}
+	}
+}

@@ -22,6 +22,24 @@ async function main() {
 		},
 	})
 
+	const createdAt = new Date()
+
+	await prisma.suggestion.createMany({
+		data: [
+			{
+				id: '2',
+				title: 'Add keyboard shortcuts',
+				createdAt,
+			},
+			{
+				id: '3',
+				title: 'Improve mobile layout',
+				createdAt,
+			}
+		],
+		skipDuplicates: true,
+	})
+
 	console.log(suggestion)
 	console.log('Suggestion count:', await prisma.suggestion.count())
 }

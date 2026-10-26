@@ -1,7 +1,7 @@
 import { createSchema } from 'graphql-yoga'
 import { GraphQLError } from 'graphql'
 
-import { getSuggestionById, setSuggestionVote } from '@/server/suggestions/service' 
+import { getSuggestionById, getSuggestionsPage, setSuggestionVote } from '@/server/suggestions/service'
 
 import type { GraphQLContext} from './context'
 import type { Resolvers } from './generated'
@@ -20,8 +20,19 @@ export const schema = createSchema<GraphQLContext>({
 			name: String!
 		}
 
+		type PageInfo {
+			hasNextPage: Boolean!
+			endCursor: String
+		}
+
+		type SuggestionConnection {
+			nodes: [Suggestion!]!
+			pageInfo: PageInfo!
+		}
+
 		type Query {
 			suggestion(id: ID!): Suggestion
+			suggestions(first: Int! = 10, after: String): SuggestionConnection!
 			viewer: User
 		}
 
@@ -33,6 +44,16 @@ export const schema = createSchema<GraphQLContext>({
 		Query: {
 			suggestion(_parent, args, context) {
 				return getSuggestionById(args.id, context.viewer?.id ?? null)
+			},
+
+			suggestions(_parent, args, context) {
+				if (args.first < 1 || args.first > 50) {
+					throw new GraphQLError('first must be between 1 and 50', {
+						extensions: { code: 'BAD_USER_INPUT' },
+					})
+				}
+
+				return getSuggestionsPage(args.first, args.after ?? null, context.viewer?.id ?? null)
 			},
 
 			viewer(_parent, _args, context) {

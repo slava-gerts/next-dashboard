@@ -69,3 +69,44 @@ export async function setSuggestionVote(
 
 	return getSuggestionById(suggestionId, userId)
 }
+
+export async function getSuggestionsPage(first: number, after: string | null, viewerId: string | null) {
+	const rows = await prisma.suggestion.findMany({
+		orderBy: [{ createdAt: 'desc' }, {id: 'desc'}],
+		take: first + 1,
+		...(after === null  ? {} : { cursor: { id: after }, skip: 1 }),
+		select: { id: true, title: true, _count: { select: { votes: true } } },
+	})
+
+	const hasNextPage = rows.length > first
+	const page = rows.slice(0, first)
+
+	const viewerVotes = viewerId === null
+		? []
+		: await prisma.vote.findMany({
+			where: {
+				userId: viewerId,
+				suggestionId: {
+					in: page.map((suggestion) => suggestion.id),
+				}
+			},
+			select: {
+				suggestionId: true,
+			}
+		})
+
+	const votedSuggestionIds = new Set(viewerVotes.map((vote) => vote.suggestionId))
+
+	return {
+		nodes: page.map((suggestion) => ({
+			id: suggestion.id,
+			title: suggestion.title,
+			voteCount: suggestion._count.votes,
+			viewerHasVoted: votedSuggestionIds.has(suggestion.id),
+		})),
+		pageInfo: {
+			hasNextPage,
+			endCursor: page.at(-1)?.id ?? null,
+		}
+	}
+}
