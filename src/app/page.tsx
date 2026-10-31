@@ -1,5 +1,6 @@
 import AuthDemo from './auth-demo'
 import SuggestionList from './suggestion-list'
+import CreateSuggestionForm from './create-suggestion-form'
 
 import styles from './page.module.css'
 
@@ -18,6 +19,7 @@ export default function Home() {
         </div>
       </header>
 
+      <CreateSuggestionForm />
       <SuggestionList />
 		</main>
 	)

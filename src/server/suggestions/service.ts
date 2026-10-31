@@ -19,9 +19,9 @@ export async function getSuggestionById(id: string, viewerId: string | null) {
 	if (!suggestion) {
 		return null
 	}
-		
-	const viewerVote = viewerId === null 
-		? null 
+
+	const viewerVote = viewerId === null
+		? null
 		: await prisma.vote.findUnique({
 			where: {
 				suggestionId_userId: {
@@ -58,7 +58,7 @@ export async function setSuggestionVote(
 
 	if (voted) {
 		await prisma.vote.createMany({
-			data: [{ suggestionId, userId}],
+			data: [{ suggestionId, userId }],
 			skipDuplicates: true,
 		})
 	} else {
@@ -72,9 +72,9 @@ export async function setSuggestionVote(
 
 export async function getSuggestionsPage(first: number, after: string | null, viewerId: string | null) {
 	const rows = await prisma.suggestion.findMany({
-		orderBy: [{ createdAt: 'desc' }, {id: 'desc'}],
+		orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
 		take: first + 1,
-		...(after === null  ? {} : { cursor: { id: after }, skip: 1 }),
+		...(after === null ? {} : { cursor: { id: after }, skip: 1 }),
 		select: { id: true, title: true, _count: { select: { votes: true } } },
 	})
 
@@ -108,5 +108,38 @@ export async function getSuggestionsPage(first: number, after: string | null, vi
 			hasNextPage,
 			endCursor: page.at(-1)?.id ?? null,
 		}
+	}
+}
+
+type SuggestionErrorCode = 'UNAUTHENTICATED' | 'BAD_USER_INPUT'
+
+export class SuggestionError extends Error {
+	constructor(public readonly code: SuggestionErrorCode, message: string) {
+		super(message)
+		this.name = 'SuggestionError'
+	}
+}
+
+export async function createSuggestion(rawTitle: string, viewer: { id: string } | null) {
+	if (!viewer) {
+		throw new SuggestionError('UNAUTHENTICATED', 'Sign in to create a suggestion.')
+	}
+
+	const title = rawTitle.trim()
+	const titleLength = Array.from(title).length
+
+	if (titleLength < 3 || titleLength > 120) {
+		throw new SuggestionError('BAD_USER_INPUT', 'Title must be between 3 and 120 characters long.')
+	}
+
+	const suggestion = await prisma.suggestion.create({
+		data: { title },
+		select: { id: true, title: true },
+	})
+
+	return {
+		...suggestion,
+		voteCount: 0,
+		viewerHasVoted: false,
 	}
 }

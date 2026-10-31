@@ -1,7 +1,13 @@
 import { createSchema } from 'graphql-yoga'
 import { GraphQLError } from 'graphql'
 
-import { getSuggestionById, getSuggestionsPage, setSuggestionVote } from '@/server/suggestions/service'
+import {
+	createSuggestion,
+	getSuggestionById,
+	getSuggestionsPage,
+	setSuggestionVote,
+	SuggestionError,
+} from '@/server/suggestions/service'
 
 import type { GraphQLContext} from './context'
 import type { Resolvers } from './generated'
@@ -36,8 +42,13 @@ export const schema = createSchema<GraphQLContext>({
 			viewer: User
 		}
 
+		input CreateSuggestionInput {
+			title: String!
+		}
+
 		type Mutation {
 			setVote(suggestionId: ID!, voted: Boolean!): Suggestion!
+			createSuggestion(input: CreateSuggestionInput!): Suggestion!
 		}
 	`,
 	resolvers: {
@@ -61,6 +72,21 @@ export const schema = createSchema<GraphQLContext>({
 			}
 		},
 		Mutation: {
+			async createSuggestion(_parent, args, context) {
+				try {
+					return await createSuggestion(args.input.title, context.viewer)
+				} catch (error) {
+					if (error instanceof SuggestionError) {
+						throw new GraphQLError(error.message, {
+							extensions: {
+								code: error.code
+							},
+						})
+					}
+
+					throw error
+				}
+			},
 			async setVote(_parent, args, context) {
 				if (!context.viewer) {
 					throw new GraphQLError('Sign in to vote', {

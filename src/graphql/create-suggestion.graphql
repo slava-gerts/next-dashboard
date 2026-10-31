@@ -1,0 +1,9 @@
+mutation CreateSuggestion($input: CreateSuggestionInput!) {
+  createSuggestion(input: $input) {
+		__typename
+		id
+		title
+		voteCount
+		viewerHasVoted
+	}
+}
