@@ -1,5 +1,6 @@
 query GetSuggestion($id: ID!) {
 	suggestion(id: $id) {
+		__typename
 		id
 		title
 		voteCount

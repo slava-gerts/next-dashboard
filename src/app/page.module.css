@@ -202,6 +202,20 @@
   background: var(--foreground);
 }
 
+.detailsLink {
+  display: inline-block;
+  margin-block-start: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.detailsLink:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 4px;
+}
+
 @media (max-width: 640px) {
   .createSuggestion form {
     grid-template-columns: 1fr;

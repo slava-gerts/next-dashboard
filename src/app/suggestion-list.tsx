@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useQuery } from '@apollo/client/react'
+import Link from 'next/link'
 
 import { GetSuggestionsDocument } from '@/graphql/generated'
 
@@ -67,6 +68,10 @@ export default function SuggestionList() {
 			{suggestions.map((suggestion) => (
 				<article key={suggestion.id} className={styles.card}>
 					<SuggestionCard suggestion={suggestion} />
+
+					<Link href={`/suggestions/${suggestion.id}`} className={styles.detailsLink}>
+						View discussion →
+					</Link>
 				</article>
 			))}
 
