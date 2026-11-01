@@ -88,19 +88,25 @@ export const schema = createSchema<GraphQLContext>({
 				}
 			},
 			async setVote(_parent, args, context) {
-				if (!context.viewer) {
-					throw new GraphQLError('Sign in to vote', {
-						extensions: {
-							code: 'UNAUTHENTICATED',
-						},
-					})
-				}
+				let suggestion = null
 
-				const suggestion = await setSuggestionVote(
-					args.suggestionId,
-					context.viewer.id,
-					args.voted,
-				)
+				try {
+					suggestion = await setSuggestionVote(
+						args.suggestionId,
+						context.viewer,
+						args.voted,
+					)
+				} catch (error) {
+					if (error instanceof SuggestionError) {
+						throw new GraphQLError(error.message, {
+							extensions: {
+								code: error.code
+							},
+						})
+					}
+
+					throw error
+				}
 
 				if (!suggestion) {
 					throw new GraphQLError('Suggestion not found', {

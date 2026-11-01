@@ -44,9 +44,15 @@ export async function getSuggestionById(id: string, viewerId: string | null) {
 
 export async function setSuggestionVote(
 	suggestionId: string,
-	userId: string,
+	viewer: { id: string } | null,
 	voted: boolean,
 ) {
+	if (!viewer) {
+		throw new SuggestionError('UNAUTHENTICATED', 'Sign in to vote')
+	}
+
+	const userId = viewer.id
+
 	const suggestion = await prisma.suggestion.findUnique({
 		where: { id: suggestionId },
 		select: { id: true },
