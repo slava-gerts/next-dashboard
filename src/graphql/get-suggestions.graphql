@@ -1,5 +1,5 @@
-query GetSuggestions($first: Int!, $after: String) {
-	suggestions(first: $first, after: $after) {
+query GetSuggestions($first: Int!, $after: String, $search: String!) {
+	suggestions(first: $first, after: $after, search: $search) {
 		nodes {
 			__typename
 			id

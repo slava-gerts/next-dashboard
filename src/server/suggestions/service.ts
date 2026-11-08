@@ -76,8 +76,21 @@ export async function setSuggestionVote(
 	return getSuggestionById(suggestionId, userId)
 }
 
-export async function getSuggestionsPage(first: number, after: string | null, viewerId: string | null) {
+export async function getSuggestionsPage(
+	first: number,
+	after: string | null,
+	viewerId: string | null,
+	rawSearch: string = '',
+) {
+	const search = rawSearch.trim()
+	if (Array.from(search).length > 120) {
+		throw new SuggestionError('BAD_USER_INPUT', 'Search must not exceed 120 characters.')
+	}
+
+	const searchPattern = search.replace(/[\\%_]/g, '\\$&')
+
 	const rows = await prisma.suggestion.findMany({
+		where: search === '' ? {} : { title: { contains: searchPattern, mode: 'insensitive' }},
 		orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
 		take: first + 1,
 		...(after === null ? {} : { cursor: { id: after }, skip: 1 }),

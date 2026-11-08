@@ -53,7 +53,7 @@ export const schema = createSchema<GraphQLContext>({
 
 		type Query {
 			suggestion(id: ID!): Suggestion
-			suggestions(first: Int! = 10, after: String): SuggestionConnection!
+			suggestions(first: Int! = 10, after: String, search: String! = ""): SuggestionConnection!
 			viewer: User
 		}
 
@@ -95,14 +95,26 @@ export const schema = createSchema<GraphQLContext>({
 				return getSuggestionById(args.id, context.viewer?.id ?? null)
 			},
 
-			suggestions(_parent, args, context) {
+			async suggestions(_parent, args, context) {
 				if (args.first < 1 || args.first > 50) {
 					throw new GraphQLError('first must be between 1 and 50', {
 						extensions: { code: 'BAD_USER_INPUT' },
 					})
 				}
 
-				return getSuggestionsPage(args.first, args.after ?? null, context.viewer?.id ?? null)
+				try {
+					return await getSuggestionsPage(args.first, args.after ?? null, context.viewer?.id ?? null, args.search)
+				} catch (error) {
+					if (error instanceof SuggestionError) {
+						throw new GraphQLError(error.message, {
+							extensions: {
+								code: error.code
+							}
+						})
+					}
+
+					throw error
+				}
 			},
 
 			viewer(_parent, _args, context) {

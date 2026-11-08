@@ -13,6 +13,7 @@
 html {
   block-size: 100%;
   background: var(--background);
+  scrollbar-gutter: stable;
 }
 
 html,

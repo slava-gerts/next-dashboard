@@ -320,6 +320,48 @@
   opacity: 0.85;
 }
 
+.searchField {
+  display: grid;
+  gap: 8px;
+  min-inline-size: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.searchField input {
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 44px;
+  padding-block: 10px;
+  padding-inline: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.searchField input::placeholder {
+  color: var(--muted);
+}
+
+.searchField input:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+.searchStatus {
+  min-block-size: 24px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.staleResults {
+  opacity: 0.55;
+}
+
 @media (max-width: 640px) {
   .createSuggestion form {
     grid-template-columns: 1fr;
