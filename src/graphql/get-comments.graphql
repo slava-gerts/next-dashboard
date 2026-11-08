@@ -1,0 +1,23 @@
+query GetComments($id: ID!, $first: Int!, $after: String) {
+	suggestion(id: $id) {
+		__typename
+		id
+		comments(first: $first, after: $after) {
+			nodes {
+				__typename
+				id
+				body
+				createdAt
+				author {
+					__typename
+					id
+					name
+				}
+			}
+			pageInfo {
+				hasNextPage
+				endCursor
+			}
+		}
+	}
+}

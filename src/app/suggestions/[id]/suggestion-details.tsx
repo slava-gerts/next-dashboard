@@ -5,6 +5,7 @@ import { useQuery } from '@apollo/client/react'
 import { GetSuggestionDocument } from '@/graphql/generated'
 
 import SuggestionCard from '../../suggestion-card'
+import Comments from './comments'
 
 import styles from '../../page.module.css'
 
@@ -33,8 +34,12 @@ export default function SuggestionDetails({ id }: Props) {
 	}
 
 	return (
-		<article className={styles.card}>
-			<SuggestionCard suggestion={suggestion} />
-		</article>
+		<>
+			<article className={styles.card}>
+				<SuggestionCard suggestion={suggestion} />
+			</article>
+
+			<Comments suggestionId={suggestion.id} />
+		</>
 	)
 }

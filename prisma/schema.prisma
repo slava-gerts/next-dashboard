@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -12,20 +11,24 @@ model Suggestion {
   id        String   @id @default(cuid())
   title     String
   createdAt DateTime @default(now())
-	votes     Vote[]
+
+  votes    Vote[]
+  comments Comment[]
 }
 
 model User {
-  id            String    @id
+  id            String   @id
   name          String
   email         String
-  emailVerified Boolean   @default(false)
+  emailVerified Boolean  @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-	votes         Vote[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions Session[]
+  accounts Account[]
+  votes    Vote[]
+  comments Comment[]
 
   @@unique([email])
   @@map("user")
@@ -80,13 +83,28 @@ model Verification {
 }
 
 model Vote {
-	suggestionId String
-	userId       String
-  createdAt    DateTime   @default(now())
-  
-	suggestion   Suggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
-	user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  suggestionId String
+  userId       String
+  createdAt    DateTime @default(now())
 
-	@@id([suggestionId, userId])
-	@@index([userId])
+  suggestion Suggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([suggestionId, userId])
+  @@index([userId])
+}
+
+model Comment {
+  id           String   @id @default(cuid())
+  body         String
+  createdAt    DateTime @default(now())
+  suggestionId String
+  authorId     String
+
+  suggestion Suggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@index([suggestionId, createdAt, id])
+  @@index([authorId])
 }

@@ -149,3 +149,5 @@ export async function createSuggestion(rawTitle: string, viewer: { id: string } 
 		viewerHasVoted: false,
 	}
 }
+
+export type SuggestionData = NonNullable<Awaited<ReturnType<typeof getSuggestionById>>>

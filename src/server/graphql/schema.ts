@@ -1,6 +1,7 @@
 import { createSchema } from 'graphql-yoga'
 import { GraphQLError } from 'graphql'
 
+import { CommentError, createComment, getCommentsPage } from '@/server/comments/service'
 import {
 	createSuggestion,
 	getSuggestionById,
@@ -19,11 +20,20 @@ export const schema = createSchema<GraphQLContext>({
 			title: String!
 			voteCount: Int!
 			viewerHasVoted: Boolean!
+			comments(first: Int! = 10, after: String): CommentConnection!
 		}
 
 		type User {
 			id: ID!
 			name: String!
+		}
+
+		type Comment {
+			id: ID!
+			body: String!
+			createdAt: String!
+			suggestionId: ID!
+			author: User!
 		}
 
 		type PageInfo {
@@ -33,6 +43,11 @@ export const schema = createSchema<GraphQLContext>({
 
 		type SuggestionConnection {
 			nodes: [Suggestion!]!
+			pageInfo: PageInfo!
+		}
+
+		type CommentConnection {
+			nodes: [Comment!]!
 			pageInfo: PageInfo!
 		}
 
@@ -46,12 +61,35 @@ export const schema = createSchema<GraphQLContext>({
 			title: String!
 		}
 
+		input CreateCommentInput {
+			suggestionId: ID!
+			body: String!
+		}
+
 		type Mutation {
 			setVote(suggestionId: ID!, voted: Boolean!): Suggestion!
 			createSuggestion(input: CreateSuggestionInput!): Suggestion!
+			createComment(input: CreateCommentInput!): Comment!
 		}
 	`,
 	resolvers: {
+		Suggestion: {
+			async comments(parent, args) {
+				try {
+					return await getCommentsPage(parent.id, args.first, args.after ?? null)
+				} catch (error) {
+					if (error instanceof CommentError) {
+						throw new GraphQLError(error.message, {
+							extensions: {
+								code: error.code,
+							},
+						})
+					}
+
+					throw error
+				}
+			},
+		},
 		Query: {
 			suggestion(_parent, args, context) {
 				return getSuggestionById(args.id, context.viewer?.id ?? null)
@@ -117,7 +155,22 @@ export const schema = createSchema<GraphQLContext>({
 				}
 
 				return suggestion
-			}
+			},
+			async createComment(_parent, args, context) {
+				try {
+					return await createComment(args.input.suggestionId, args.input.body, context.viewer)
+				} catch (error) {
+					if (error instanceof CommentError) {
+						throw new GraphQLError(error.message, {
+							extensions: {
+								code: error.code,
+							},
+						})
+					}
+
+					throw error
+				}
+			},
 		}
 	} satisfies Resolvers,
 })

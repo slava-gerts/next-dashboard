@@ -13,6 +13,10 @@ const config: CodegenConfig = {
 			plugins: ['typescript', 'typescript-resolvers'],
 			config: {
 				contextType: './context#GraphQLContext',
+				useTypeImports: true,
+				mappers: {
+					Suggestion: '../suggestions/service#SuggestionData'
+				}
 			},
 		},
 		'src/graphql/generated.ts': {

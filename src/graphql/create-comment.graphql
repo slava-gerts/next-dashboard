@@ -1,0 +1,14 @@
+mutation CreateComment($input: CreateCommentInput!) {
+	createComment(input: $input) {
+		__typename
+		id
+		body
+		createdAt
+		suggestionId
+		author {
+			__typename
+			id
+			name
+		}
+	}
+}
