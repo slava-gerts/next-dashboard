@@ -4,6 +4,7 @@ query GetSuggestions($first: Int!, $after: String, $search: String!) {
 			__typename
 			id
 			title
+			status
 			voteCount
 			viewerHasVoted
 		}

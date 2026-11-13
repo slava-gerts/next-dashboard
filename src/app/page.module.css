@@ -362,6 +362,71 @@
   opacity: 0.55;
 }
 
+.statusForm {
+  display: grid;
+  grid-template-columns: minmax(0, 18rem) auto;
+  justify-content: start;
+  align-items: end;
+  gap: 12px;
+  margin-block-start: 16px;
+  padding-block-start: 16px;
+  border-block-start: 1px solid var(--border);
+}
+
+.statusForm label {
+  display: grid;
+  gap: 6px;
+  min-inline-size: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.statusForm select {
+  inline-size: 100%;
+  min-block-size: 44px;
+  padding-inline: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.statusForm select:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+.statusForm button {
+  min-inline-size: 7rem;
+  background: var(--foreground);
+  color: var(--background);
+  border-color: transparent;
+}
+
+.statusForm button:hover:not(:disabled) {
+  background: var(--foreground);
+  opacity: 0.85;
+}
+
+.statusForm [role='alert'] {
+  grid-column: -1 / 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .page {
+    --error: #fda29b;
+  }
+}
+
+@media (max-width: 480px) {
+  .statusForm {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 640px) {
   .createSuggestion form {
     grid-template-columns: 1fr;
@@ -374,15 +439,7 @@
   .commentForm button {
     inline-size: 100%;
   }
-}
 
-@media (prefers-color-scheme: dark) {
-  .page {
-    --error: #fda29b;
-  }
-}
-
-@media (max-width: 640px) {
   .page {
     margin-block: 32px;
   }

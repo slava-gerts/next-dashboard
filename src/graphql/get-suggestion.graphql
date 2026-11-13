@@ -3,6 +3,7 @@ query GetSuggestion($id: ID!) {
 		__typename
 		id
 		title
+		status
 		voteCount
 		viewerHasVoted
 	}

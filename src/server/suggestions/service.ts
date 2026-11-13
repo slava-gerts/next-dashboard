@@ -8,6 +8,7 @@ export async function getSuggestionById(id: string, viewerId: string | null) {
 		select: {
 			id: true,
 			title: true,
+			status: true,
 			_count: {
 				select: {
 					votes: true,
@@ -37,6 +38,7 @@ export async function getSuggestionById(id: string, viewerId: string | null) {
 	return {
 		id: suggestion.id,
 		title: suggestion.title,
+		status: suggestion.status,
 		voteCount: suggestion._count.votes,
 		viewerHasVoted: viewerVote !== null,
 	}
@@ -94,7 +96,7 @@ export async function getSuggestionsPage(
 		orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
 		take: first + 1,
 		...(after === null ? {} : { cursor: { id: after }, skip: 1 }),
-		select: { id: true, title: true, _count: { select: { votes: true } } },
+		select: { id: true, title: true, status: true, _count: { select: { votes: true } } },
 	})
 
 	const hasNextPage = rows.length > first
@@ -120,6 +122,7 @@ export async function getSuggestionsPage(
 		nodes: page.map((suggestion) => ({
 			id: suggestion.id,
 			title: suggestion.title,
+			status: suggestion.status,
 			voteCount: suggestion._count.votes,
 			viewerHasVoted: votedSuggestionIds.has(suggestion.id),
 		})),
@@ -153,7 +156,7 @@ export async function createSuggestion(rawTitle: string, viewer: { id: string } 
 
 	const suggestion = await prisma.suggestion.create({
 		data: { title },
-		select: { id: true, title: true },
+		select: { id: true, title: true, status: true },
 	})
 
 	return {

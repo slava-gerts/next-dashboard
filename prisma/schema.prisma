@@ -7,10 +7,25 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserRole {
+  USER
+  MODERATOR
+}
+
+enum SuggestionStatus {
+  OPEN
+  PLANNED
+  IN_PROGRESS
+  DONE
+  DECLINED
+}
+
 model Suggestion {
   id        String   @id @default(cuid())
   title     String
   createdAt DateTime @default(now())
+
+  status SuggestionStatus @default(OPEN)
 
   votes    Vote[]
   comments Comment[]
@@ -29,6 +44,8 @@ model User {
   accounts Account[]
   votes    Vote[]
   comments Comment[]
+
+  role UserRole @default(USER)
 
   @@unique([email])
   @@map("user")

@@ -3,6 +3,7 @@ mutation SetVote($suggestionId: ID!, $voted: Boolean!) {
 		__typename
 		id
 		title
+		status
 		voteCount
 		viewerHasVoted
 	}

@@ -3,6 +3,7 @@ mutation CreateSuggestion($input: CreateSuggestionInput!) {
 		__typename
 		id
 		title
+		status
 		voteCount
 		viewerHasVoted
 	}

@@ -3,6 +3,7 @@ import 'server-only'
 import { betterAuth } from 'better-auth'
 import { prismaAdapter } from '@better-auth/prisma-adapter'
 
+import { UserRole } from '@/generated/prisma/enums'
 import { prisma } from '@/server/db'
 
 function requiredEnv(name: string): string {
@@ -27,6 +28,16 @@ export const auth = betterAuth({
 		google: {
 			clientId: requiredEnv('GOOGLE_CLIENT_ID'),
 			clientSecret: requiredEnv('GOOGLE_CLIENT_SECRET'),
+		},
+	},
+
+	user: {
+		additionalFields: {
+			role: {
+				type: Object.values(UserRole),
+				defaultValue: UserRole.USER,
+				input: false,
+			},
 		},
 	},
 })

@@ -10,16 +10,25 @@ import {
 	SuggestionError,
 } from '@/server/suggestions/service'
 
-import type { GraphQLContext} from './context'
+import type { GraphQLContext } from './context'
 import type { Resolvers } from './generated'
 
 export const schema = createSchema<GraphQLContext>({
 	typeDefs: /* GraphQL */ `
+		enum SuggestionStatus {
+			OPEN
+			PLANNED
+			IN_PROGRESS
+			DONE
+			DECLINED
+		}
+			
 		type Suggestion {
 			id: ID!
 			title: String!
 			voteCount: Int!
 			viewerHasVoted: Boolean!
+			status: SuggestionStatus!
 			comments(first: Int! = 10, after: String): CommentConnection!
 		}
 

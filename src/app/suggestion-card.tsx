@@ -7,6 +7,14 @@ import { authClient } from '@/lib/auth-client'
 
 type SuggestionNode = GetSuggestionsQuery['suggestions']['nodes'][number]
 
+const statusLabels: Record<SuggestionNode['status'], string> = {
+	OPEN: 'Open',
+	PLANNED: 'Planned',
+	IN_PROGRESS: 'In progress',
+	DONE: 'Done',
+	DECLINED: 'Declined',
+}
+
 type Props = {
 	suggestion: SuggestionNode
 }
@@ -44,6 +52,8 @@ export default function SuggestionCard({suggestion}: Props) {
 	return (
 		<section>
 			<h2>{suggestion.title}</h2>
+
+			<p>Status: {statusLabels[suggestion.status]}</p>
 
 			<p>Votes: {suggestion.voteCount}</p>
 

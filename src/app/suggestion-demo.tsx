@@ -33,6 +33,7 @@ export default function SuggestionDemo() {
 						__typename: 'Suggestion',
 						id: suggestion.id,
 						title: suggestion.title,
+						status: suggestion.status,
 						voteCount: Math.max(0, suggestion.voteCount + (voted ? 1 : -1)),
 						viewerHasVoted: voted,
 					},
